@@ -1,0 +1,15 @@
+project : CPPBase {
+  includes += $(BSAPI_ROOT)/include
+  libpaths += $(BSAPI_ROOT)/lib/32-bit
+  
+  includes += $(SQLITE_ROOT)
+  libpaths += $(SQLITE_ROOT)
+  
+  pure_libs += bsapi.lib
+  
+  Source_Files {
+    *.cpp
+  }  
+
+  managed = 1
+}

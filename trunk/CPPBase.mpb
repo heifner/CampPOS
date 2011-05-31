@@ -1,0 +1,13 @@
+project : CampPOSBase {
+  specific {
+    // so assemblies can be added as references to .NET projects
+    add_references = 1
+       
+    Release::libout = $(CAMPPOS_ROOT)/Output/Release
+    Debug::libout = $(CAMPPOS_ROOT)/Output/Debug
+      
+    unicode = 1
+       
+    includes += $(CAMPPOS_ROOT)
+  }
+}
