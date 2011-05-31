@@ -1,0 +1,9 @@
+project : CampPOSBase {
+
+	specific {
+	    // to avoid "Load of property 'ReferencePath' failed.  Cannot add '.' 
+	    // as a reference path as it is relative. Please specify an absolute path." 
+	    // on C# project load into the IDE
+	    libpaths -= .
+	}
+}

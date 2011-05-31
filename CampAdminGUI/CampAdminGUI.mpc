@@ -1,0 +1,29 @@
+project : CSBase {
+	exename = CampAdmin
+	
+	after += Camp
+	
+	specific {
+		winapp = true
+	}
+	
+	Source_Files {
+    	*.cs
+    	*.Designer.cs
+  	} 
+  	
+  	Source_Files {
+    	subtype = Form
+    	CampAdminGUI.cs
+  	}
+  	
+  	Resx_Files {
+    	generates_source = 1
+    	subtype = Designer
+    	Properties/Resources.resx
+  	}
+  	
+  	// since adding additional assemblies, need to explicitly add the first three
+  	lit_libs += System System.Data System.Xml 
+  	lit_libs += System.Drawing System.Windows.Forms
+}
