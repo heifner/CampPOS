@@ -479,22 +479,25 @@ FPManager::getEntry(FPKey key) const
   return entry;
 }
 
-FPKey 
-FPManager::createEntry(void* entryAsVoid)
+bool
+FPManager::createEntry(FPKey key, const void* entryAsVoid)
 {
-  ABS_BIR* entry = reinterpret_cast<ABS_BIR*>(entryAsVoid);
+  // remove entry if already exists, ignore error
+  bool existed = deleteEntry(key);
+  err_.clear();
+
+  const ABS_BIR* entry = reinterpret_cast<const ABS_BIR*>(entryAsVoid);
 
   char* newEntry = new char[entry->Header.Length];
   memcpy(newEntry, entry, entry->Header.Length);
 
   ABS_BIR* newTemplate = reinterpret_cast<ABS_BIR*>(newEntry);
 
-  FPKey key = nextKey_;
-  ++nextKey_;
+  nextKey_ = key >= nextKey_ ? key + 1 : nextKey_;
 
   rawEntries_.push_back(newTemplate);
   entries_[newTemplate] = key;
 
-  return key;
+  return existed;
 }
 

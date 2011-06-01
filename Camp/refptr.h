@@ -8,6 +8,8 @@
 #ifndef ref_ptr_H
 #define ref_ptr_H
 
+#include <stdexcept>
+
 template <class X>
 class ref_ptr {
 public:
@@ -51,9 +53,15 @@ public:
   bool owned()   const { return owned_; }
 
   // dereference ref_ptr returns dereferenced internal pointer.
-  X& operator*()  const { return *px_; }
+  X& operator*()  const { 
+    if (!px_) throw std::runtime_error("Null ref_ptr operator*");
+    return *px_; 
+  }
   // forward function calls on to the internal pointer.
-  X* operator->() const { return px_; }
+  X* operator->() const { 
+    if (!px_) throw std::runtime_error("Null ref_ptr operator->");
+    return px_; 
+  }
   
   // For most cases, you will want to dereference and compare objects,
   // these methods only compare internal pointers.
