@@ -49,7 +49,8 @@ public:
   /// @return entry for storage
   std::pair<size_t,void*> getEntry(FPKey key) const;
   /// Create entry from storage
-  FPKey createEntry(void* entryAsVoid);
+  /// @return true if key already exists and is replaced
+  bool createEntry(FPKey key, const void* entryAsVoid);
 
 private:
   /// Initialize ABS API

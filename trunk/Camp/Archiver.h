@@ -3,29 +3,31 @@
 
 #include <string>
 
-struct sqlite3;
+class Camper;
+class Camp;
+namespace sd {
+  struct sqlite;
+}
 
 class Archiver
 {
 public:
   Archiver();
+  ~Archiver();
 
   void open(const std::string& fileName);
+  void close();
 
-  void insertRow(
-    long long id,
-    const std::string& firstName,
-    const std::string& lastName,
-    float amount,
-    size_t blobSize,
-    void* blob);
+  void load(Camp& camp);
+
+  void insertRow(const Camper& camper, size_t blobSize, const void* blob);
 
   void updateRow(long long id, float amount);
 
   void deleteRow(long long id);
 
 private:
-  sqlite3* db_;
+  sd::sqlite* db_;
 };
 
 #endif // ARCHIVER

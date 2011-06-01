@@ -15,8 +15,8 @@ namespace {
   void createBackup(const std::string& fileName) {
     ifstream ifs(fileName.c_str(), ios::binary);
     if (!ifs) {
-      std::string err = "Unable to open file: " + fileName;
-      throw std::runtime_error(err);
+      // if unable to open, then likely doesn't exist, so no need to backup
+      return;
     }
 
     // create backup
@@ -55,88 +55,22 @@ Camp::start()
 
   createBackup(fileName_);
 
-  // reopen for loading
-  ifstream ifs(fileName_.c_str(), ios::binary);
-  if (!ifs) {
-    std::string err = "Unable to reopen file: " + fileName_;
-    throw std::runtime_error(err);
-  }
-
-  // size, first_name, size, last_name, amount, size, fp_blob
-  while (ifs) {
-    std::string firstName;
-    std::string lastName;
-    float amount = 0.0f;
-    size_t size = 0;
-    // firstName
-    ifs.read(reinterpret_cast<char*>(&size), sizeof(size));
-    if (!ifs.good()) break;
-    char* buf = new char[size];
-    ifs.read(buf, size);
-    firstName = buf;
-    delete[] buf;
-    // lastName
-    ifs.read(reinterpret_cast<char*>(&size), sizeof(size));
-    buf = new char[size];
-    ifs.read(buf, size);
-    lastName = buf;
-    delete[] buf;
-    // amount
-    ifs.read(reinterpret_cast<char*>(&amount), sizeof(amount));
-    // blob
-    ifs.read(reinterpret_cast<char*>(&size), sizeof(size));
-    buf = new char[size];
-    ifs.read(buf, size);
-    FPKey id = FPManager::instance().createEntry(buf);
-    delete[] buf;
-
-    ref_ptr<Camper> camper(new Camper(id, firstName, lastName, amount));
-    idToCamper_[id] = camper;
-  }
-
+  db_.open(fileName_);
+  db_.load(*this);
 }
+
+void 
+Camp::addCamper(const ref_ptr<Camper>& camper, const void* blob)
+{
+  FPManager::instance().createEntry(camper->getId(), blob);
+  idToCamper_[camper->getId()] = camper;
+}
+
 
 void
 Camp::stop()
 {
-  ofstream ofs(fileName_.c_str(), ios::binary);
-  if (!ofs) {
-    std::string err = "Unable to open file: " + fileName_;
-    throw std::runtime_error(err);
-  }
-
-  // size, first_name, size, last_name, amount, size, fp_blob
-  for (FPKeyToCamperMap::iterator i = idToCamper_.begin(), end = idToCamper_.end(); i != end; ++i) {
-    FPKey id = i->first;
-    ref_ptr<Camper> camper = i->second;
-
-    std::pair<size_t,void*> entry = FPManager::instance().getEntry(id);
-    if (entry.first == 0) {
-      cerr << "Unable to archive camper (" << camper->getFirstName() << ", " << camper->getLastName() << "):" << endl;
-      cerr << FPManager::instance().getLastError() << endl;
-      continue;
-    }
-
-    // firstName
-    std::string name = camper->getFirstName();
-    size_t size = name.size() + 1;
-    const char* ch = name.c_str();
-    ofs.write(reinterpret_cast<char*>(&size), sizeof(size));
-    ofs.write(ch, size);
-    // lastName
-    name = camper->getLastName();
-    size = name.size() + 1;
-    ch = name.c_str();
-    ofs.write(reinterpret_cast<char*>(&size), sizeof(size));
-    ofs.write(ch, size);
-    // amount
-    float amount = camper->getAmount();
-    ofs.write(reinterpret_cast<char*>(&amount), sizeof(amount));
-    // blob
-    size = entry.first;
-    ofs.write(reinterpret_cast<char*>(&size), sizeof(size));
-    ofs.write(static_cast<char*>(entry.second), size);
-  }
+  db_.close();
 
   // doesn't matter if it fails
   FPManager::instance().close();
@@ -157,6 +91,10 @@ Camp::addCamper(const std::string& firstName,
   ref_ptr<Camper> camper(new Camper(id, firstName, lastName));
   camper->setAmount(amount);
   idToCamper_[id] = camper;
+  
+  // add to database
+  std::pair<size_t,void*> entry = FPManager::instance().getEntry(id);
+  db_.insertRow(*camper, entry.first, entry.second);
   return id;
 }
 
@@ -202,6 +140,8 @@ Camp::deleteCamper(FPKey id)
     err += FPManager::instance().getLastError();
     throw std::runtime_error(err);
   }
+  // Remove from database
+  db_.deleteRow(id);
 }
 
 void 
@@ -215,6 +155,8 @@ Camp::updateAmount(FPKey id, float amount)
   }
   ref_ptr<Camper> camper = i->second;
   camper->setAmount(amount);
+  // Update database
+  db_.updateRow(id, amount);
 }
 
 

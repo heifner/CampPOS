@@ -6,10 +6,7 @@ project : CPPBase {
   libpaths += $(SQLITE_ROOT)
   
   pure_libs += bsapi.lib
+  pure_libs += sqlite3.lib
   
-  Source_Files {
-    *.cpp
-  }  
-
   managed = 1
 }
