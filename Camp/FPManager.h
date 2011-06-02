@@ -43,6 +43,10 @@ public:
   /// @return false if unable to find.
   bool findEntry(FPKey& key) const;
 
+  /// Cancel any current ABS operation.
+  /// Can/should be called from different thread.
+  void cancel() const;
+
   /// Used to append to current error message, not intented for general use.
   void appendError(const std::string& err) { err_ += "\n"; err_ += err; }
 

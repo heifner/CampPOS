@@ -281,7 +281,7 @@ namespace {
     // ID of the operation. We don't need to identify the operation in this 
     // application. When non-zero, the ID identifies the operation and allows it
     // to be canceled from any other thread with ABSCancelOperation().
-    0,         
+    1,         
 
     // Arbitrary pointer, which allows application to pass any data into
     // the callback.
@@ -457,6 +457,12 @@ FPManager::findEntry(FPKey& key) const
 
   key = i->second;
   return true;
+}
+
+void
+FPManager::cancel() const
+{
+  ABSCancelOperation(absConnection_, abs_op.OperationID);
 }
 
 std::pair<size_t,void*> 

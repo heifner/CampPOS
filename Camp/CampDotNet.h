@@ -8,6 +8,10 @@ class Camp;
 using namespace System;
 using namespace System::Collections::Generic;
 
+/// .Net Interfaces.
+
+/// .Net struct for Camper.
+/// @see Camper
 public value struct CamperDotNet {
   Int64 id_;
   String^ firstName_;
@@ -15,7 +19,8 @@ public value struct CamperDotNet {
   Single amount_;
 };
 
-// Wrap Camp API with a .NET class.
+/// .Net wrapper for Camp API.
+/// @see Camp for documentation. 
 public ref class CampDotNet {
 public:
 	CampDotNet();
@@ -26,19 +31,24 @@ public:
 
 	Int64 AddCamper(String^ firstName, String^ lastName, Single amount);
 
-  /// Use finger print reader to find a camper.
-  void GetCamper(Int64% id, String^% firstName, String^% lastName, Single% amount);
+  CamperDotNet GetCamper(Int64 id);
+
+  Int64 FindCamper();
 
   IList<CamperDotNet>^ getAllCampers();
 
   void UpdateCamper(Int64 id, Single amount);
+
   void DeleteCamper(Int64 id);
+
+  void CancelOperation();
 
 private:
   // Can't put an unmanaged thing in a ref class, but a pointer to an unmanaged thing is okay.
   Camp* camp_;
 };
 
+/// .Net exception to wrap std::exception
 public ref class CampException : public Exception {
 public:
 	CampException(String ^msg) : Exception(msg) {}
