@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Globalization;
 
 
 namespace CampPOSNS
@@ -19,7 +20,6 @@ namespace CampPOSNS
             try
             {
                 InitializeComponent();
-                MessageBox.Show("Starting");
                 using (new WaitCursor())
                 {
                     camp_.Start();
@@ -29,6 +29,10 @@ namespace CampPOSNS
                         CamperDotNet camper = campers_[i];
                         dataGridView.Rows.Add(camper.id_, camper.firstName_, camper.lastName_, camper.amount_);
                     }
+                    // [id, first, last, amount] sort by last name
+                    dataGridView.Sort(dataGridView.Columns[2], ListSortDirection.Ascending);
+                    // disable create button
+                    enableCreateButton();
                 }
             }
             catch (Exception ex)
@@ -49,25 +53,39 @@ namespace CampPOSNS
 
 
         // implement UI method
-        private void bCreate_Click(object sender, EventArgs e)
+        private void buttonCreate_Click(object sender, EventArgs e)
         {
             try
             {
-                // if input is blank, do nothing, else create the item
-                if (String.IsNullOrEmpty(tCreateDesc.Text))
-                    return;
+                // if input is blank, should be disable, just return
+                if (String.IsNullOrEmpty(textBoxFirstName.Text)) return;
+                if (String.IsNullOrEmpty(textBoxLastName.Text)) return;
+                float amount;
+                if (!float.TryParse(maskedTextBoxAmount.Text, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-US"), out amount)) return;
+                // remove leading/trailing spaces
+                String firstName = textBoxFirstName.Text.Trim();
+                String lastName = textBoxLastName.Text.Trim();
 
-                // invoke the method
-                long id = camp_.AddCamper(tCreateDesc.Text, tCreateDesc.Text, 25.0f);
-                Log("Item '" + tCreateDesc.Text + "' created with id " + id);
+                // Interact with finger reader
+                long id = camp_.AddCamper(firstName, lastName, amount);
+                // Get the newly enrolled camper
+                CamperDotNet camper = camp_.GetCamper(id);
+                // Add to DataGridView, sort, and select
+                int idx = dataGridView.Rows.Add(camper.id_, camper.firstName_, camper.lastName_, camper.amount_);
+                // id, first, last, amount
+                DataGridViewCell newCell = dataGridView.Rows[idx].Cells[2];
+                dataGridView.Sort(dataGridView.Columns[2], ListSortDirection.Ascending);
+                dataGridView.CurrentCell = newCell;
             }
             catch (CampException ex)
             {
-                Log(ex.Message);
+                MessageBox.Show(ex.Message);
             }
 
             // after completion (or failure) clear the input
-            tCreateDesc.Text = "";
+            textBoxFirstName.Text = "";
+            textBoxLastName.Text = "";
+            maskedTextBoxAmount.Text = "";
         }
 
         private void bRead_Click(object sender, EventArgs e)
@@ -82,7 +100,7 @@ namespace CampPOSNS
                 {
                     string description = "";
                     float amount = 0.0f;
-                    camp_.GetCamper(ref id, ref description, ref description, ref amount);
+//                    camp_.GetCamper(ref id, ref description, ref description, ref amount);
                     Log("Item '" + description + "' read with id " + id);
                 }
             }
@@ -145,8 +163,68 @@ namespace CampPOSNS
 
         private void dataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            DataGridViewCell cell = dataGridView.Rows[e.RowIndex].Cells[0];
-            tReadID.Text = Convert.ToString(cell.Value);
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewCell cell = dataGridView.Rows[e.RowIndex].Cells[0];
+                tReadID.Text = Convert.ToString(cell.Value);
+            }
+        }
+
+        private void textBoxFirstName_Validating(object sender, CancelEventArgs e)
+        {
+            enableCreateButton();
+        }
+
+        private void textBoxLastName_TextChanged(object sender, EventArgs e)
+        {
+            enableCreateButton();
+
+            if (String.IsNullOrEmpty(textBoxLastName.Text)) return;
+
+            String toFind = textBoxLastName.Text.ToLower();
+
+            for (int i = 0; i < dataGridView.RowCount; ++i)
+            {
+                // id, first, last, amount
+                String lastName = dataGridView.Rows[i].Cells[2].Value.ToString();
+                Log(lastName);
+                if (lastName.ToLower().StartsWith(toFind))
+                {
+                    dataGridView.CurrentCell = dataGridView.Rows[i].Cells[2];
+                    break;
+                }
+            }
+
+        }
+
+        private void maskedTextBoxAmount_TextChanged(object sender, EventArgs e)
+        {
+            enableCreateButton();
+        }
+
+        private void maskedTextBoxAmount_Validating(object sender, CancelEventArgs e)
+        {
+            // Don't be annoying if no value
+            if (String.IsNullOrEmpty(maskedTextBoxAmount.Text)) return;
+
+            float num;
+            bool isValid = float.TryParse(maskedTextBoxAmount.Text, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-US"), out num);
+            if (!isValid)
+            {
+                MessageBox.Show("Invalid Amount, please entry a value amount.");
+                e.Cancel = true;
+            }
+            enableCreateButton();
+        }
+
+        private void enableCreateButton()
+        {
+            float num;
+            bool enable = 
+                !String.IsNullOrEmpty(textBoxFirstName.Text) &&
+                !String.IsNullOrEmpty(textBoxLastName.Text) &&
+                float.TryParse(maskedTextBoxAmount.Text, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-US"), out num);
+            buttonCreate.Enabled = enable;
         }
 
     }

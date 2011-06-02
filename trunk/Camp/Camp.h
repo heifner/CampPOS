@@ -12,28 +12,44 @@
 
 class Archiver;
 
-/// Control class of application
+/// Main control class of application
 class Camp {
 public:
   Camp() {}
 
+  /// Init finger print reader, open database, load values.
   void start();
+  /// Close finger print reader, close database
   void stop();
 
+  /// Interact with finger print reader to get finger print
+  /// and save new Camper to database.
   FPKey addCamper(
     const std::string& firstName,
     const std::string& lastName,
     float amount);
 
+  /// Interact with finger print reader to find Camper.
   FPKey findCamper() const;
+
+  /// Does not interact with finger print reader.
+  /// @return Camper from memory given id.
   ref_ptr<Camper> getCamper(FPKey id) const;
 
+  /// Remove Camper from database.
+  /// Does not interact with finger print reader.
   void deleteCamper(FPKey id);
 
+  /// Update Camper amount in database.
+  /// Does not interact with finger print reader.
   void updateAmount(FPKey id, float amount);
 
-  typedef std::map< FPKey, ref_ptr<Camper> > FPKeyToCamperMap;
+  /// Cancel current finger print reader operation.
+  /// Should be called from different thread.
+  void cancelOperation();
 
+  /// Provide iteration over all Campers.
+  typedef std::map< FPKey, ref_ptr<Camper> > FPKeyToCamperMap;
   FPKeyToCamperMap::const_iterator begin() const { return idToCamper_.begin(); }
   FPKeyToCamperMap::const_iterator end() const { return idToCamper_.end(); }
 
