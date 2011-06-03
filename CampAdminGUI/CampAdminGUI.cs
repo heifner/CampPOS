@@ -13,26 +13,38 @@ namespace CampPOSNS
     public partial class CampAdminGUI : Form
     {
         CampDotNet camp_ = new CampDotNet();
-        IList<CamperDotNet> campers_;
+        BackgroundWorker bwCreate = new BackgroundWorker();
+        BackgroundWorker bwScan = new BackgroundWorker();
 
         public CampAdminGUI()
         {
             try
             {
                 InitializeComponent();
+
+                bwCreate.DoWork += new DoWorkEventHandler(bwCreate_DoWork);
+                bwCreate.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bwCreate_RunWorkerCompleted);
+
+                bwScan.DoWork += new DoWorkEventHandler(bwScan_DoWork);
+                bwScan.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bwScan_RunWorkerCompleted);
+
                 using (new WaitCursor())
                 {
                     camp_.Start();
-                    campers_ = camp_.getAllCampers();
-                    for (int i = 0; i < campers_.Count; ++i) 
+                    IList<CamperDotNet> campers = camp_.getAllCampers();
+                    for (int i = 0; i < campers.Count; ++i) 
                     {
-                        CamperDotNet camper = campers_[i];
+                        CamperDotNet camper = campers[i];
                         dataGridView.Rows.Add(camper.id_, camper.firstName_, camper.lastName_, camper.amount_);
                     }
-                    // [id, first, last, amount] sort by last name
-                    dataGridView.Sort(dataGridView.Columns[2], ListSortDirection.Ascending);
+                    if (campers.Count > 0)
+                    {
+                        // [id, first, last, amount] sort by last name
+                        dataGridView.Sort(dataGridView.Columns[2], ListSortDirection.Ascending);
+                        dataGridView.Rows[0].Selected = true;
+                    }
                     // disable create button
-                    enableCreateButton();
+                    enableDisable();
                 }
             }
             catch (Exception ex)
@@ -44,11 +56,7 @@ namespace CampPOSNS
         // add a message to the list view, but be careful if called from another thread
         private void Log(string s)
         {
-            // id, firstname, lastname, amount
-            if (InvokeRequired)
-                BeginInvoke(new MethodInvoker(delegate { listView.Items.Add(s); }));
-            else
-                listView.Items.Add(s);
+            Console.WriteLine(s);
         }
 
 
@@ -66,92 +74,168 @@ namespace CampPOSNS
                 String firstName = textBoxFirstName.Text.Trim();
                 String lastName = textBoxLastName.Text.Trim();
 
-                // Interact with finger reader
-                long id = camp_.AddCamper(firstName, lastName, amount);
-                // Get the newly enrolled camper
-                CamperDotNet camper = camp_.GetCamper(id);
-                // Add to DataGridView, sort, and select
-                int idx = dataGridView.Rows.Add(camper.id_, camper.firstName_, camper.lastName_, camper.amount_);
-                // id, first, last, amount
-                DataGridViewCell newCell = dataGridView.Rows[idx].Cells[2];
-                dataGridView.Sort(dataGridView.Columns[2], ListSortDirection.Ascending);
-                dataGridView.CurrentCell = newCell;
+                CamperDotNet camper = new CamperDotNet();
+                camper.firstName_ = firstName;
+                camper.lastName_ = lastName;
+                camper.amount_ = amount;
+
+                bwCreate.RunWorkerAsync(camper);
             }
             catch (CampException ex)
             {
                 MessageBox.Show(ex.Message);
             }
-
-            // after completion (or failure) clear the input
-            textBoxFirstName.Text = "";
-            textBoxLastName.Text = "";
-            maskedTextBoxAmount.Text = "";
+            enableDisable();
         }
 
-        private void bRead_Click(object sender, EventArgs e)
+        private void bwCreate_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = sender as BackgroundWorker;
+
+            CamperDotNet camper = (CamperDotNet)e.Argument;
+
+            // Interact with finger reader
+            long id = camp_.AddCamper(camper.firstName_, camper.lastName_, camper.amount_);
+
+            e.Result = id;
+        }
+
+        private void bwCreate_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             try
             {
-                if (String.IsNullOrEmpty(tReadID.Text))
-                    return;
-                long id = Convert.ToInt64(tReadID.Text);
-
-                using (new WaitCursor())
+                if (e.Error != null)
                 {
-                    string description = "";
-                    float amount = 0.0f;
-//                    camp_.GetCamper(ref id, ref description, ref description, ref amount);
-                    Log("Item '" + description + "' read with id " + id);
+                    MessageBox.Show(e.Error.Message);
+                }
+                else if (e.Cancelled)
+                {
+                    return;
+                }
+                else
+                {
+                    long id = (long)e.Result;
+                    // Get the newly enrolled camper
+                    CamperDotNet camper = camp_.GetCamper(id);
+                    // Add to DataGridView, sort, and select
+                    int idx = dataGridView.Rows.Add(camper.id_, camper.firstName_, camper.lastName_, camper.amount_);
+                    // id, first, last, amount
+                    DataGridViewCell newCell = dataGridView.Rows[idx].Cells[2];
+                    dataGridView.Sort(dataGridView.Columns[2], ListSortDirection.Ascending);
+                    dataGridView.CurrentCell = newCell;
                 }
             }
             catch (CampException ex)
             {
-                Log(ex.Message);
+                MessageBox.Show(ex.Message);
             }
-
-            tReadID.Text = "";
+            // after completion (or failure) clear the input
+            textBoxFirstName.Text = "";
+            textBoxLastName.Text = "";
+            maskedTextBoxAmount.Text = "";
+            enableDisable();
         }
 
-        private void bUpdate_Click(object sender, EventArgs e)
+        private void buttonScan_Click(object sender, EventArgs e)
         {
             try
             {
-                if (String.IsNullOrEmpty(tUpdateID.Text))
-                    return;
-                if (String.IsNullOrEmpty(tUpdateDesc.Text))
-                    return;
+                // if no rows, then nothing to scan for
+                if (dataGridView.Rows.Count <= 0) return;
 
-                long id = Convert.ToInt64(tUpdateID.Text);
-                float amount = Convert.ToSingle(tUpdateDesc.Text);
+                bwScan.RunWorkerAsync();
+            }
+            catch (CampException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            enableDisable();
+        }
+
+        private void bwScan_DoWork(object sender, DoWorkEventArgs e)
+        {
+            // Interact with finger reader
+            long id = camp_.FindCamper();
+
+            e.Result = id;
+        }
+
+        private void bwScan_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            try
+            {
+                if (e.Error != null)
+                {
+                    MessageBox.Show(e.Error.Message);
+                }
+                else if (e.Cancelled)
+                {
+                    return;
+                }
+                else
+                {
+                    long idToFind = (long)e.Result;
+                    for (int i = 0; i < dataGridView.RowCount; ++i)
+                    {
+                        // id, first, last, amount
+                        long id = (long)dataGridView.Rows[i].Cells[0].Value;
+                        if (id == idToFind)
+                        {
+                            dataGridView.CurrentCell = dataGridView.Rows[i].Cells[0];
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (CampException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            enableDisable();
+        }
+
+        private void buttonUpdate_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(textBoxUpdateAmount.Text)) return;
+                DataGridViewSelectedRowCollection rows = dataGridView.SelectedRows;
+                if (rows.Count <= 0) return;
+                float amount;
+                bool isValid = float.TryParse(textBoxUpdateAmount.Text, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-US"), out amount);
+
+                // id, first, last, amount
+                DataGridViewCell idCell = rows[0].Cells[0];
+                Int64 id = Convert.ToInt64(idCell.Value);
                 camp_.UpdateCamper(id, amount);
-                Log("Item " + id + " updated with amount '" + tUpdateDesc.Text + "'");
+                DataGridViewCell amountCell = rows[0].Cells[3];
+                amountCell.Value = textBoxUpdateAmount.Text;
             }
             catch (CampException ex)
             {
                 Log(ex.Message);
             }
-
-            tUpdateID.Text = "";
-            tUpdateDesc.Text = "";
         }
 
-        private void bDelete_Click(object sender, EventArgs e)
+        private void buttonDelete_Click(object sender, EventArgs e)
         {
             try
             {
-                if (String.IsNullOrEmpty(tDeleteID.Text))
-                    return;
-
-                long id = Convert.ToInt64(tDeleteID.Text);
-                camp_.DeleteCamper(id);
-                Log("Item " + id + " has been deleted");
+                DataGridViewSelectedRowCollection rows = dataGridView.SelectedRows;
+                if (rows.Count > 0)
+                {
+                    // id, first, last, amount
+                    DataGridViewCell cell = rows[0].Cells[0];
+                    Int64 id = Convert.ToInt64(cell.Value);
+                    camp_.DeleteCamper(id);
+                    dataGridView.Rows.Remove(rows[0]);
+                }
             }
             catch (CampException ex)
             {
-                Log(ex.Message);
+                MessageBox.Show(ex.Message);
             }
-
-            tDeleteID.Text = "";
+            enableDisable();
         }
 
 
@@ -163,21 +247,28 @@ namespace CampPOSNS
 
         private void dataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0)
+            DataGridViewSelectedRowCollection rows = dataGridView.SelectedRows;
+            if (rows.Count > 0)
             {
-                DataGridViewCell cell = dataGridView.Rows[e.RowIndex].Cells[0];
-                tReadID.Text = Convert.ToString(cell.Value);
+                // id, first, last, amount
+                DataGridViewCell cell = rows[0].Cells[3];
+                textBoxUpdateAmount.Text = Convert.ToString(cell.Value);
             }
+            else
+            {
+                textBoxUpdateAmount.Text = "";
+            }
+            enableDisable();
         }
 
         private void textBoxFirstName_Validating(object sender, CancelEventArgs e)
         {
-            enableCreateButton();
+            enableDisable();
         }
 
         private void textBoxLastName_TextChanged(object sender, EventArgs e)
         {
-            enableCreateButton();
+            enableDisable();
 
             if (String.IsNullOrEmpty(textBoxLastName.Text)) return;
 
@@ -194,12 +285,11 @@ namespace CampPOSNS
                     break;
                 }
             }
-
         }
 
         private void maskedTextBoxAmount_TextChanged(object sender, EventArgs e)
         {
-            enableCreateButton();
+            enableDisable();
         }
 
         private void maskedTextBoxAmount_Validating(object sender, CancelEventArgs e)
@@ -207,24 +297,64 @@ namespace CampPOSNS
             // Don't be annoying if no value
             if (String.IsNullOrEmpty(maskedTextBoxAmount.Text)) return;
 
-            float num;
-            bool isValid = float.TryParse(maskedTextBoxAmount.Text, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-US"), out num);
+            float amount;
+            bool isValid = float.TryParse(maskedTextBoxAmount.Text, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-US"), out amount);
             if (!isValid)
             {
                 MessageBox.Show("Invalid Amount, please entry a value amount.");
                 e.Cancel = true;
             }
-            enableCreateButton();
+            enableDisable();
         }
 
-        private void enableCreateButton()
+        private void buttonCancel_Click(object sender, EventArgs e)
         {
+            camp_.CancelOperation();
+        }
+
+        private void enableDisable()
+        {
+            // Create/Scan button
             float num;
-            bool enable = 
+            bool enable =
                 !String.IsNullOrEmpty(textBoxFirstName.Text) &&
                 !String.IsNullOrEmpty(textBoxLastName.Text) &&
                 float.TryParse(maskedTextBoxAmount.Text, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-US"), out num);
             buttonCreate.Enabled = enable;
+
+            // Cancel button
+            bool bwBusy = bwCreate.IsBusy || bwScan.IsBusy;
+            buttonCancel.Enabled = bwBusy;
+            // Progrss bar
+            if (bwBusy)
+            {
+                progressBarScan.Style = ProgressBarStyle.Marquee;
+                if (bwCreate.IsBusy)
+                {
+                    progressBarScan.MarqueeAnimationSpeed = 300;
+                    labelProgress.Text = "Scan Finger again.";
+                }
+                else
+                {
+                    progressBarScan.MarqueeAnimationSpeed = 100;
+                    labelProgress.Text = "Scan Finger.";
+                }
+                labelProgress.ForeColor = System.Drawing.Color.Red;
+                labelProgress.Update();
+            }
+            else
+            {
+                progressBarScan.Style = ProgressBarStyle.Blocks;
+                labelProgress.Text = "Ready.";
+                labelProgress.ForeColor = System.Drawing.Color.Black;
+                labelProgress.Update();
+            }
+            // Delete, Update buttons
+            bool selectedRow = dataGridView.SelectedRows.Count > 0;
+            buttonDelete.Enabled = selectedRow;
+            buttonUpdate.Enabled = selectedRow;
+            // Find/Scan button
+            buttonScan.Enabled = dataGridView.Rows.Count > 0;
         }
 
     }
