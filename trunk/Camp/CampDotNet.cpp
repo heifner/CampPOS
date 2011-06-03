@@ -119,6 +119,7 @@ CampDotNet::UpdateCamper(Int64 id, Single amount)
     
     ref_ptr<Camper> camper = camp_->getCamper(key);
     camper->setAmount(cppAmount);
+    camp_->updateAmount(id, cppAmount);
   } catch (std::exception& e) {
 		throw gcnew CampException(gcnew String(e.what()));
   }

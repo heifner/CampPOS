@@ -290,12 +290,12 @@ namespace {
     // Pointer to a simple callback implementation function.
     callback,  
 
-    // Timeout. For example, lets set timeout to 60 sec. Note the value does 
+    // Timeout. For example, 60000 is timeout set to 60 sec. Note the value does 
     // not limit how long the operation (e.g. ABSVerify()) can take. The 
     // timeout only specifies time the operation waits for user to put his 
-    // finger on a sensor. Zero would mean no timeout (i.e. the operation can 
+    // finger on a sensor. Zero means no timeout (i.e. the operation can 
     // never end if user never puts his finger on the sensor.)
-    60000,
+    0, // for 60 secs use: 60000
 
     // By default BSAPI places short time delays between sending some important
     // callback messages. The purpose of this is to guarantee that if multiple
@@ -445,6 +445,10 @@ FPManager::findEntry(FPKey& key) const
   if (res != ABS_STATUS_OK) {
     err_ += "ABSVerify() failed\n";
     status_info(res, err_);
+    return false;
+  }
+  if (index == -1) {
+    err_ += "Unable to find entry.\n";
     return false;
   }
 
