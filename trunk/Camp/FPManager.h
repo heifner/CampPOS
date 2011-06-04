@@ -23,8 +23,10 @@ public:
   std::string getLastError() const { return err_; }
 
   /// Connects with scanner hardware.
+  /// @param deviceIndex USB Finger Print device to use. 
+  ///        0 means use first one found.
   /// @return true if successful, false if unsuccessful.
-  bool open();
+  bool open(size_t deviceIndex = 0);
 
   /// Disconnects from scanner hardware.
   /// Frees all memory.

@@ -48,6 +48,7 @@ namespace CampPOSNS
             this.labelPrice = new System.Windows.Forms.Label();
             this.buttonPurchase = new System.Windows.Forms.Button();
             this.listBoxTransactions = new System.Windows.Forms.ListBox();
+            this.buttonRefund = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxFirstName
@@ -147,6 +148,7 @@ namespace CampPOSNS
             // 
             // buttonIcon
             // 
+            this.buttonIcon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonIcon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.buttonIcon.FlatAppearance.BorderSize = 0;
             this.buttonIcon.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.Control;
@@ -167,7 +169,7 @@ namespace CampPOSNS
             this.textBoxQuantity.Name = "textBoxQuantity";
             this.textBoxQuantity.Size = new System.Drawing.Size(46, 20);
             this.textBoxQuantity.TabIndex = 1;
-            this.textBoxQuantity.Leave += new System.EventHandler(this.textBoxQuantity_Leave);
+            this.textBoxQuantity.TextChanged += new System.EventHandler(this.textBoxQuantity_TextChanged);
             // 
             // labelQuantity
             // 
@@ -184,6 +186,7 @@ namespace CampPOSNS
             this.textBoxPrice.Name = "textBoxPrice";
             this.textBoxPrice.Size = new System.Drawing.Size(46, 20);
             this.textBoxPrice.TabIndex = 2;
+            this.textBoxPrice.TabStop = false;
             this.textBoxPrice.Leave += new System.EventHandler(this.textBoxPrice_Leave);
             // 
             // labelPrice
@@ -207,18 +210,34 @@ namespace CampPOSNS
             // 
             // listBoxTransactions
             // 
+            this.listBoxTransactions.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.listBoxTransactions.FormattingEnabled = true;
+            this.listBoxTransactions.HorizontalScrollbar = true;
             this.listBoxTransactions.Location = new System.Drawing.Point(12, 143);
             this.listBoxTransactions.Name = "listBoxTransactions";
-            this.listBoxTransactions.Size = new System.Drawing.Size(468, 303);
+            this.listBoxTransactions.Size = new System.Drawing.Size(468, 316);
             this.listBoxTransactions.TabIndex = 57;
             this.listBoxTransactions.TabStop = false;
+            // 
+            // buttonRefund
+            // 
+            this.buttonRefund.Location = new System.Drawing.Point(199, 114);
+            this.buttonRefund.Name = "buttonRefund";
+            this.buttonRefund.Size = new System.Drawing.Size(75, 23);
+            this.buttonRefund.TabIndex = 58;
+            this.buttonRefund.TabStop = false;
+            this.buttonRefund.Text = "Refund";
+            this.buttonRefund.UseVisualStyleBackColor = true;
+            this.buttonRefund.Click += new System.EventHandler(this.buttonRefund_Click);
             // 
             // CampSaleGUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(492, 466);
+            this.Controls.Add(this.buttonRefund);
             this.Controls.Add(this.listBoxTransactions);
             this.Controls.Add(this.buttonPurchase);
             this.Controls.Add(this.labelPrice);
@@ -237,7 +256,6 @@ namespace CampPOSNS
             this.Controls.Add(this.labelFirstName);
             this.Controls.Add(this.textBoxFirstName);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(500, 500);
             this.MinimumSize = new System.Drawing.Size(500, 500);
             this.Name = "CampSaleGUI";
             this.Text = "CampSale";
@@ -267,6 +285,7 @@ namespace CampPOSNS
         private System.Windows.Forms.Label labelPrice;
         private System.Windows.Forms.Button buttonPurchase;
         private System.Windows.Forms.ListBox listBoxTransactions;
+        private System.Windows.Forms.Button buttonRefund;
     }
 }
 

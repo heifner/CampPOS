@@ -1,3 +1,4 @@
+// Copyright 2011 Kevin Heifner.  All rights reserved.
 #include "Archiver.h"
 #include "Camp.h"
 #include "Camper.h"

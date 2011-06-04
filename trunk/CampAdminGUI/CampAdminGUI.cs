@@ -1,3 +1,4 @@
+// Copyright 2011 Kevin Heifner.  All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,42 +19,40 @@ namespace CampPOSNS
 
         public CampAdminGUI()
         {
-            try
+            // We want an exception thrown if anything goes wrong, so that Program can exit.
+            InitializeComponent();
+
+            bwCreate.DoWork += new DoWorkEventHandler(bwCreate_DoWork);
+            bwCreate.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bwCreate_RunWorkerCompleted);
+
+            bwScan.DoWork += new DoWorkEventHandler(bwScan_DoWork);
+            bwScan.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bwScan_RunWorkerCompleted);
+
+            using (new WaitCursor())
             {
-                InitializeComponent();
-
-                bwCreate.DoWork += new DoWorkEventHandler(bwCreate_DoWork);
-                bwCreate.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bwCreate_RunWorkerCompleted);
-
-                bwScan.DoWork += new DoWorkEventHandler(bwScan_DoWork);
-                bwScan.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bwScan_RunWorkerCompleted);
-
-                using (new WaitCursor())
+                camp_.Start();
+                IList<CamperDotNet> campers = camp_.getAllCampers();
+                for (int i = 0; i < campers.Count; ++i)
                 {
-                    camp_.Start();
-                    IList<CamperDotNet> campers = camp_.getAllCampers();
-                    for (int i = 0; i < campers.Count; ++i) 
-                    {
-                        CamperDotNet camper = campers[i];
-                        dataGridView.Rows.Add(camper.id_, camper.firstName_, camper.lastName_, camper.amount_.ToString("F"));
-                    }
-                    if (campers.Count > 0)
-                    {
-                        // [id, first, last, amount] sort by last name
-                        dataGridView.Sort(dataGridView.Columns[2], ListSortDirection.Ascending);
-                        dataGridView.Rows[0].Selected = true;
-                    }
-                    // disable create button
-                    enableDisable();
+                    CamperDotNet camper = campers[i];
+                    dataGridView.Rows.Add(camper.id_, camper.firstName_, camper.lastName_, camper.amount_.ToString("F"));
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Exception: " + ex);
+                if (campers.Count > 0)
+                {
+                    // [id, first, last, amount] sort by last name
+                    dataGridView.Sort(dataGridView.Columns[2], ListSortDirection.Ascending);
+                    dataGridView.Rows[0].Selected = true;
+                }
+                // disable create button
+                enableDisable();
             }
         }
 
-        // implement UI method
+        private void showMessageBox(String msg)
+        {
+            MessageBoxEx.Show(this, msg, "Camp Admin");
+        }
+
         private void buttonCreate_Click(object sender, EventArgs e)
         {
             try
@@ -76,7 +75,7 @@ namespace CampPOSNS
             }
             catch (CampException ex)
             {
-                MessageBox.Show(ex.Message);
+                showMessageBox(ex.Message);
             }
             enableDisable();
         }
@@ -99,7 +98,7 @@ namespace CampPOSNS
             {
                 if (e.Error != null)
                 {
-                    MessageBox.Show(e.Error.Message);
+                    showMessageBox(e.Error.Message);
                 }
                 else if (e.Cancelled)
                 {
@@ -111,7 +110,7 @@ namespace CampPOSNS
                     // Get the newly enrolled camper
                     CamperDotNet camper = camp_.GetCamper(id);
                     // Add to DataGridView, sort, and select
-                    int idx = dataGridView.Rows.Add(camper.id_, camper.firstName_, camper.lastName_, camper.amount_);
+                    int idx = dataGridView.Rows.Add(camper.id_, camper.firstName_, camper.lastName_, camper.amount_.ToString("F"));
                     // id, first, last, amount
                     DataGridViewCell newCell = dataGridView.Rows[idx].Cells[2];
                     dataGridView.Sort(dataGridView.Columns[2], ListSortDirection.Ascending);
@@ -120,7 +119,7 @@ namespace CampPOSNS
             }
             catch (CampException ex)
             {
-                MessageBox.Show(ex.Message);
+                showMessageBox(ex.Message);
             }
             // after completion (or failure) clear the input
             textBoxFirstName.Text = "";
@@ -140,7 +139,7 @@ namespace CampPOSNS
             }
             catch (CampException ex)
             {
-                MessageBox.Show(ex.Message);
+                showMessageBox(ex.Message);
             }
             enableDisable();
         }
@@ -159,7 +158,7 @@ namespace CampPOSNS
             {
                 if (e.Error != null)
                 {
-                    MessageBox.Show(e.Error.Message);
+                    showMessageBox(e.Error.Message);
                 }
                 else if (e.Cancelled)
                 {
@@ -182,7 +181,7 @@ namespace CampPOSNS
             }
             catch (CampException ex)
             {
-                MessageBox.Show(ex.Message);
+                showMessageBox(ex.Message);
             }
             enableDisable();
         }
@@ -206,7 +205,7 @@ namespace CampPOSNS
             }
             catch (CampException ex)
             {
-                MessageBox.Show(ex.Message);
+                showMessageBox(ex.Message);
             }
         }
 
@@ -226,7 +225,7 @@ namespace CampPOSNS
             }
             catch (CampException ex)
             {
-                MessageBox.Show(ex.Message);
+                showMessageBox(ex.Message);
             }
             enableDisable();
         }
@@ -293,7 +292,7 @@ namespace CampPOSNS
             bool isValid = float.TryParse(maskedTextBoxAmount.Text, NumberStyles.Currency, CultureInfo.GetCultureInfo("en-US"), out amount);
             if (!isValid)
             {
-                MessageBox.Show("Invalid Amount, please entry a value amount.");
+                showMessageBox("Invalid Amount, please entry a value amount.");
                 e.Cancel = true;
             }
             enableDisable();
@@ -348,6 +347,5 @@ namespace CampPOSNS
             // Find/Scan button
             buttonScan.Enabled = dataGridView.Rows.Count > 0;
         }
-
     }
 }
