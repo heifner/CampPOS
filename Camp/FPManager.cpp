@@ -37,7 +37,7 @@ namespace {
   }
 
   // Open BSAPI session.
-  bool bsapi_open(ABS_CONNECTION& conn, std::string& err)
+  bool bsapi_open(ABS_CONNECTION& conn, size_t deviceIndex, std::string& err)
   {
     // Check whether it's not already open.
     if (conn != 0) {
@@ -68,20 +68,24 @@ namespace {
       ABSFree(dev_list);
       return false;
     }
+    if (deviceIndex >= dev_list->NumDevices) {
+      stringstream ss;
+      ss << "USB Device Index [" << deviceIndex << "] outside range of available devices [0.." 
+         << (dev_list->NumDevices - 1) << "].\n";
+      err += ss.str();
+      return false;
+    }
     if (dev_list->NumDevices > 1) {
       // There are more then one devices connected.
-      // For now we will just use the first device.
       cout << "Found more than one device:" << endl;
       for (size_t i = 0; i < dev_list->NumDevices; ++i) {
         cout << "[" << i << "]: " << dev_list->List[i].DsnSubString << endl;
       }
-      cout << "Using device [0]" << endl;
     }
-    int dev_index = 0;
 
     // Open device.
-    cout << "Opening device: " << dev_list->List[dev_index].DsnSubString << endl;
-    res = ABSOpen(dev_list->List[dev_index].DsnSubString, &conn);
+    cout << "Opening device: " << dev_list->List[deviceIndex].DsnSubString << endl;
+    res = ABSOpen(dev_list->List[deviceIndex].DsnSubString, &conn);
     if (res != ABS_STATUS_OK) {
       ABSFree(dev_list);
       err += "ABSOpen() failed.\n";
@@ -354,10 +358,10 @@ FPManager::FPManager()
 }
 
 bool
-FPManager::open()
+FPManager::open(size_t deviceIndex)
 {
   err_.clear();
-  return bsapi_open(absConnection_, err_);
+  return bsapi_open(absConnection_, deviceIndex, err_);
 }
 
 bool

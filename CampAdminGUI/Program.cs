@@ -1,3 +1,4 @@
+// Copyright 2011 Kevin Heifner.  All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -8,44 +9,43 @@ namespace CampPOSNS
     static class Program
     {
         /// <summary>
-        /// The main entry point for the application.
+        /// The main entry point for the CampAdmin GUI application.
         /// </summary>
         [STAThread]
         static void Main()
         {
             try
             {
-                if (IsProcessOpen("CampSale"))
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+
+                if (ProcessUtil.IsProcessOpen("CampSale"))
                 {
                     MessageBox.Show("Please close CampSale first.");
                     return;
                 }
-                if (IsProcessOpen("CampAdmin"))
+                if (ProcessUtil.IsProcessOpen("CampAdmin"))
                 {
                     MessageBox.Show("CampAdmin already running.");
                     return;
                 }
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
+
                 Application.Run(new CampAdminGUI());
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                try
+                {
+                    MessageBox.Show(e.Message, "Camp Admin");
+                }
+                catch (Exception)
+                {
+                    // If unable to show message box then rethrow original exception
+                    throw e;
+                }
+                // Application.Exit() and Environment.Exit(1) didn't work.
+                Process.GetCurrentProcess().Kill();
             }
-        }
-
-        /// <returns>true if process with given name found and not current process</returns>
-        static public bool IsProcessOpen(string name)
-        {
-            int currentProcessId = Process.GetCurrentProcess().Id;
-            // List of all running processes on computer
-            foreach (Process clsProcess in Process.GetProcesses())
-            {
-                if (clsProcess.Id != currentProcessId && clsProcess.ProcessName.Contains(name)) return true;
-            }
-            return false;
         }
     }
 }

@@ -1,30 +1,31 @@
 project : CSBase {
-	exename = CampSale
-	
-	after += Camp
-	
-	specific {
-		winapp = true
-	}
-	
-	Source_Files {
-    	*.cs
-    	*.Designer.cs
-  	} 
-  	
-  	Source_Files {
-    	subtype = Form
-    	CampSaleGUI.cs
-  	}
-  	
-  	Resx_Files {
-    	generates_source = 1
-    	subtype = Designer
-    	CampSaleGUI.resx
-    	Properties/Resources.resx
-  	}
-  	
-  	// since adding additional assemblies, need to explicitly add the first three
-  	lit_libs += System System.Data System.Xml 
-  	lit_libs += System.Drawing System.Windows.Forms
+  exename = CampSale
+  
+  after += Camp
+  
+  specific {
+    winapp = true
+  }
+  
+  Source_Files {
+    *.cs
+    *.Designer.cs
+    ../GUIUtil/*.cs    
+  } 
+    
+  Source_Files {
+    subtype = Form
+    CampSaleGUI.cs
+  }
+    
+  Resx_Files {
+    generates_source = 1
+    subtype = Designer
+    CampSaleGUI.resx
+    Properties/Resources.resx
+  }
+    
+  // since adding additional assemblies, need to explicitly add the first three
+  lit_libs += System System.Data System.Xml 
+  lit_libs += System.Drawing System.Windows.Forms
 }

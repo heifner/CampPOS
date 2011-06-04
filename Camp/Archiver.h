@@ -1,3 +1,4 @@
+// Copyright 2011 Kevin Heifner.  All rights reserved.
 #ifndef ARCHIVER_H
 #define ARCHIVER_H
 

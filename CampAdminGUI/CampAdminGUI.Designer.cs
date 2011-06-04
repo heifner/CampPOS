@@ -76,7 +76,8 @@ namespace CampPOSNS
             // 
             // buttonUpdate
             // 
-            this.buttonUpdate.Location = new System.Drawing.Point(112, 431);
+            this.buttonUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonUpdate.Location = new System.Drawing.Point(121, 431);
             this.buttonUpdate.Name = "buttonUpdate";
             this.buttonUpdate.Size = new System.Drawing.Size(75, 23);
             this.buttonUpdate.TabIndex = 5;
@@ -87,6 +88,7 @@ namespace CampPOSNS
             // 
             // buttonDelete
             // 
+            this.buttonDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonDelete.Location = new System.Drawing.Point(405, 431);
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.Size = new System.Drawing.Size(75, 23);
@@ -100,6 +102,9 @@ namespace CampPOSNS
             // 
             this.dataGridView.AllowUserToAddRows = false;
             this.dataGridView.AllowUserToDeleteRows = false;
+            this.dataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IdColumn,
@@ -216,6 +221,7 @@ namespace CampPOSNS
             // 
             // labelAmountUpdate
             // 
+            this.labelAmountUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelAmountUpdate.AutoSize = true;
             this.labelAmountUpdate.Location = new System.Drawing.Point(14, 436);
             this.labelAmountUpdate.Name = "labelAmountUpdate";
@@ -225,9 +231,10 @@ namespace CampPOSNS
             // 
             // textBoxUpdateAmount
             // 
+            this.textBoxUpdateAmount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.textBoxUpdateAmount.Location = new System.Drawing.Point(63, 433);
             this.textBoxUpdateAmount.Name = "textBoxUpdateAmount";
-            this.textBoxUpdateAmount.Size = new System.Drawing.Size(43, 20);
+            this.textBoxUpdateAmount.Size = new System.Drawing.Size(52, 20);
             this.textBoxUpdateAmount.TabIndex = 48;
             this.textBoxUpdateAmount.TabStop = false;
             // 
@@ -254,6 +261,7 @@ namespace CampPOSNS
             // 
             // buttonIcon
             // 
+            this.buttonIcon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonIcon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.buttonIcon.FlatAppearance.BorderSize = 0;
             this.buttonIcon.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.Control;
@@ -291,7 +299,6 @@ namespace CampPOSNS
             this.Controls.Add(this.textBoxFirstName);
             this.Controls.Add(this.buttonCreate);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(500, 500);
             this.MinimumSize = new System.Drawing.Size(500, 500);
             this.Name = "CampAdminGUI";
             this.Text = "CampAdmin";

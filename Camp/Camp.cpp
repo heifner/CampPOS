@@ -41,7 +41,9 @@ Camp::start()
     throw std::runtime_error(err);
   }
 
-  if (!FPManager::instance().open()) {
+  int deviceIndex = Config::getInt("USBDeviceIndex", 0);
+
+  if (!FPManager::instance().open(deviceIndex)) {
     std::string err = "Unable to start finger print reader:\n";
     err += FPManager::instance().getLastError();
     throw std::runtime_error(err);
