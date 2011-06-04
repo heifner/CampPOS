@@ -36,6 +36,7 @@ public:
   int getIntSetting(const std::string& name, int def = 0) const;
   bool getBoolSetting(const std::string& name, bool def = false) const;
   long long getLongLongSetting(const std::string& name, long long def = 0) const;
+  double getDoubleSetting(const std::string& name, double def = 0.0) const;
   
   static bool init(const std::string& configFileName);
 
@@ -43,6 +44,7 @@ public:
   static int getInt(const std::string& name, int def = 0);
   static bool getBool(const std::string& name, bool def = false);
   static long long getLongLong(const std::string& name, long long def = 0);
+  static double getDouble(const std::string& name, double def = 0.0);
 
   void setStringSetting(const std::string& name, const std::string& def);
 

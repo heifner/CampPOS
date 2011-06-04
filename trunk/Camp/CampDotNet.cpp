@@ -145,3 +145,14 @@ CampDotNet::CancelOperation()
 		throw gcnew CampException(gcnew String(e.what()));
   }
 }
+
+Single
+CampDotNet::GetDefaultPrice()
+{
+  try {
+    return camp_->getDefaultPrice();
+  } catch (std::exception& e) {
+		throw gcnew CampException(gcnew String(e.what()));
+  }
+}
+

@@ -164,3 +164,10 @@ Camp::cancelOperation()
 {
   FPManager::instance().cancel();
 }
+
+float 
+Camp::getDefaultPrice() const
+{
+  double price = Config::getDouble("DefaultPrice", 0.50);
+  return static_cast<float>(price);
+}
