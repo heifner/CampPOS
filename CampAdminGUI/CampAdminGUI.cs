@@ -35,7 +35,7 @@ namespace CampPOSNS
                     for (int i = 0; i < campers.Count; ++i) 
                     {
                         CamperDotNet camper = campers[i];
-                        dataGridView.Rows.Add(camper.id_, camper.firstName_, camper.lastName_, camper.amount_);
+                        dataGridView.Rows.Add(camper.id_, camper.firstName_, camper.lastName_, camper.amount_.ToString("F"));
                     }
                     if (campers.Count > 0)
                     {
@@ -52,13 +52,6 @@ namespace CampPOSNS
                 MessageBox.Show("Exception: " + ex);
             }
         }
-
-        // add a message to the list view, but be careful if called from another thread
-        private void Log(string s)
-        {
-            Console.WriteLine(s);
-        }
-
 
         // implement UI method
         private void buttonCreate_Click(object sender, EventArgs e)
@@ -213,7 +206,7 @@ namespace CampPOSNS
             }
             catch (CampException ex)
             {
-                Log(ex.Message);
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -252,7 +245,7 @@ namespace CampPOSNS
             {
                 // id, first, last, amount
                 DataGridViewCell cell = rows[0].Cells[3];
-                textBoxUpdateAmount.Text = Convert.ToString(cell.Value);
+                textBoxUpdateAmount.Text = Convert.ToSingle(cell.Value).ToString("F");
             }
             else
             {
@@ -278,7 +271,6 @@ namespace CampPOSNS
             {
                 // id, first, last, amount
                 String lastName = dataGridView.Rows[i].Cells[2].Value.ToString();
-                Log(lastName);
                 if (lastName.ToLower().StartsWith(toFind))
                 {
                     dataGridView.CurrentCell = dataGridView.Rows[i].Cells[2];

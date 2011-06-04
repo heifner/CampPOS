@@ -15,19 +15,19 @@ namespace CampPOSNS
         {
             try
             {
-                if (IsProcessOpen("CampSale"))
-                {
-                    MessageBox.Show("Please close CampSale first.");
-                    return;
-                }
                 if (IsProcessOpen("CampAdmin"))
                 {
-                    MessageBox.Show("CampAdmin already running.");
+                    MessageBox.Show("Please close CampAdmin first.");
+                    return;
+                }
+                if (IsProcessOpen("CampSale"))
+                {
+                    MessageBox.Show("CampSale already running.");
                     return;
                 }
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new CampAdminGUI());
+                Application.Run(new CampSaleGUI());
             }
             catch (Exception e)
             {

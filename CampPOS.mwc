@@ -3,6 +3,7 @@ workspace {
   csharp {
     cmdline += -language csharp    
     CampAdminGUI
+    CampSaleGUI
   }
   Camp
 }

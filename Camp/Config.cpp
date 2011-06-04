@@ -23,15 +23,8 @@ namespace {
     return str.substr(beginStr, range);
   }
 
-  bool isInt(const std::string& s, int& number) {
-    if (s.empty()) {
-      return false;
-    }
-    istringstream ss(s);
-    return ((ss >> number) && (ss >> std::ws).eof());
-  }
-
-  bool isLongLong(const std::string& s, long long& number) {
+  template <typename T>
+  bool isNumber(const std::string& s, T& number) {
     if (s.empty()) {
       return false;
     }
@@ -129,7 +122,7 @@ Config::getIntSetting(const std::string& name, int def) const {
     return def;
   }
   int ret;
-  if (isInt(tmp, ret)) {
+  if (isNumber(tmp, ret)) {
     return ret;
   }
   return def;
@@ -146,7 +139,7 @@ Config::getBoolSetting(const std::string& name, bool def) const {
     return true;
   }
   int n;
-  if (isInt(tmp, n)) {
+  if (isNumber(tmp, n)) {
     return n != 0;
   }
   return false;
@@ -159,7 +152,20 @@ Config::getLongLongSetting(const std::string& name, long long def) const {
     return def;
   }
   long long ret;
-  if (isLongLong(tmp, ret)) {
+  if (isNumber(tmp, ret)) {
+    return ret;
+  }
+  return def;
+}
+
+double
+Config::getDoubleSetting(const std::string& name, double def) const {
+  std::string tmp = getStringSetting(name);
+  if (tmp.empty()) {
+    return def;
+  }
+  double ret;
+  if (isNumber(tmp, ret)) {
     return ret;
   }
   return def;
@@ -183,6 +189,11 @@ Config::getBool(const std::string& name, bool def) {
 long long
 Config::getLongLong(const std::string& name, long long def) {
   return Config::instance().getLongLongSetting(name, def);
+}
+
+double
+Config::getDouble(const std::string& name, double def) {
+  return Config::instance().getDoubleSetting(name, def);
 }
 
 void 

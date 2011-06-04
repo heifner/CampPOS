@@ -53,6 +53,13 @@ public:
   FPKeyToCamperMap::const_iterator begin() const { return idToCamper_.begin(); }
   FPKeyToCamperMap::const_iterator end() const { return idToCamper_.end(); }
 
+  /// Config Values
+
+  /// DefaultPrice = 0.50
+  /// @return the default price for items from the config file.
+  ///         If no default price in config file, return $0.50.
+  float getDefaultPrice() const;
+
 protected: // friendly
   friend class Archiver;
 

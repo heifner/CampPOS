@@ -43,6 +43,8 @@ public:
 
   void CancelOperation();
 
+  Single GetDefaultPrice();
+
 private:
   // Can't put an unmanaged thing in a ref class, but a pointer to an unmanaged thing is okay.
   Camp* camp_;
