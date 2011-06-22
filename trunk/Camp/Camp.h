@@ -73,7 +73,6 @@ private:
 private:
   Archiver db_;
   FPKeyToCamperMap idToCamper_;
-  std::string fileName_;
 };
 
 #endif // CAMP_H

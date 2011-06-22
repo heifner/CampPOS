@@ -31,6 +31,7 @@ namespace {
       ofs.put(ch);
     }
   }
+
 }
 
 void
@@ -49,15 +50,24 @@ Camp::start()
     throw std::runtime_error(err);
   }
 
-  fileName_ = Config::getString("DBFile");
-  if (fileName_.empty()) {
+  std::string dbFileName = Config::getString("DBFile");
+  if (dbFileName.empty()) {
     std::string err = "DBFile not specified in CampPOS.ini.";
     throw std::runtime_error(err);
   }
 
-  createBackup(fileName_);
+  std::string transLogName = Config::getString("TransactionLogDir");
+  if (transLogName.empty()) {
+    std::string err = "TransactionLogDir not specified in CampPOS.ini.";
+    throw std::runtime_error(err);
+  }
+  transLogName += "/CampPOS_";
+  transLogName += db_.getDateTimeString("%y-%m-%d");
+  transLogName += ".log";
 
-  db_.open(fileName_);
+  createBackup(dbFileName);
+
+  db_.open(dbFileName, transLogName);
   db_.load(*this);
 }
 

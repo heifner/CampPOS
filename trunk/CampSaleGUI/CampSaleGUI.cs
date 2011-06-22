@@ -209,6 +209,14 @@ namespace CampPOSNS
             enableDisable();
         }
 
+        private void textBoxQuantity_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                this.buttonPurchase.PerformClick();
+            }
+        }
+
         private void textBoxPrice_Leave(object sender, EventArgs e)
         {
             enableDisable();
@@ -244,6 +252,7 @@ namespace CampPOSNS
                 labelProgress.Update();
             }
         }
+
 
     }
 }
