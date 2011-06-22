@@ -170,6 +170,7 @@ namespace CampPOSNS
             this.textBoxQuantity.Size = new System.Drawing.Size(46, 20);
             this.textBoxQuantity.TabIndex = 1;
             this.textBoxQuantity.TextChanged += new System.EventHandler(this.textBoxQuantity_TextChanged);
+            this.textBoxQuantity.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxQuantity_KeyDown);
             // 
             // labelQuantity
             // 
