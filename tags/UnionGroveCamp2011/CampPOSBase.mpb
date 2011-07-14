@@ -1,0 +1,8 @@
+project {
+  specific {
+    Release::install = $(CAMPPOS_ROOT)/Output/Release
+    Debug::install = $(CAMPPOS_ROOT)/Output/Debug
+
+    warning_level = 4
+  }
+}

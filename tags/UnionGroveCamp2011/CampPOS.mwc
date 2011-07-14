@@ -1,0 +1,9 @@
+workspace {
+  // nothing special about "csharp", it is just a group
+  csharp {
+    cmdline += -language csharp    
+    CampAdminGUI
+    CampSaleGUI
+  }
+  Camp
+}
