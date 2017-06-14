@@ -1,0 +1,163 @@
+----------------
+BSAPI SDK for PC
+----------------
+
+=====================
+version 4.1
+=====================
+ADD: New device property ABS_DEVPROP_NVM_TYPE was added and can be used with ABSGetDeviceProperty.
+ADD: New Finger detection functionality - There is new function ABSDetectFinger which allows detecting whether finger is present on the sensor and allows waiting until finger is present or until finger is removed.
+ADD: Life imagery sample added
+CHG: New biometric library included (3.1.0.254) – Faint finger image enhancement 
+CHG: BSAPI libraries are digitally signed
+
+
+=====================
+version 4.0
+=====================
+
+- ADD Support for TCS5D swipe sensor sonly devices.
+- ADD ABSGetDeviceProperty() now supports new constant ABS_DEVPROP_USAGE
+- ADD Parameters ABS_PARAM_CONSOLIDATION_COUNT_MAX and ABS_PARAM_CONSOLIDATION_COUNT_MIN
+- ADD Extended LED support - ABSGetLedEx, ABSSetLedEx
+- ADD New error code ABS_STATUS_NOT_ENOUGH_PERMANENT_MEMORY
+- ADD Function ABSSessionEscape() function.
+- ADD Global parameter ABS_PARAM_IGNORE_BIOMETRIC_TIMEOUT
+- FIX ABSSet/GetLED() provide more appropriate error message via ABSGetLastErrorInfo() in case of PT_STATUS_ACCESS_DENIED
+
+
+=====================
+version 3.9 beta
+=====================
+- Enhanced support for area sensors. Multiple sessions with multiple area sensors 
+  in one process can be opened concurrently.
+- ADD two new global parameters controlling power management 
+  (ABS_PARAM_POWER_SAVE_ACTIVE_TO_SLEEP_TIMEOUT and 
+  ABS_PARAM_POWER_SAVE_RESET_ON_OPERATION_START)
+- ADD two new device properties (ABS_DEVPROP_SYSTEM_ID and ABS_DEVPROP_SYSTEM_NAME)
+
+
+=====================
+version 3.6.1
+=====================
+- FIXED several minor bugfixes.
+
+Known problems:
+- ABSRawGrab and ABSRawGrabImage functions do not honour profile key 
+  ABS_PKEY_WAIT_FOR_ACCEPTABLE for strip sensors in some situations.
+
+
+=====================
+version 3.6
+=====================
+- ADD support for Windows 7 (with legacy driver).
+- ADD support for TCD50v3 devices.
+- ADD support for steel-coated sensors.
+- ADD support for enabling/disabling anti-latent checking in raw grab 
+  operations.
+- Minor enhancements for area sensors.
+- ADD support for 3rd party devices with embedded UPEK sensors.
+
+Known problems:
+- ABSRawGrab and ABSRawGrabImage functions do not honour profile key 
+  ABS_PKEY_WAIT_FOR_ACCEPTABLE for strip sensors in some situations.
+
+
+=====================
+version 3.5.2
+=====================
+- ADD support for area sensors
+- ADD compatibility with Windows NT service
+- ADD support for Terminal Services and Citrix
+- ADD dynamic enrollment.
+- ADD grabbing with dynamic image formats
+- ADD BSSRV.DLL added, for client-server solutions.
+- ADD BCLIB.LIB added, for converting UPEK fingerprint template formats.
+- ABS_CALLBACK is guaranteed to be called in a context of the same thread 
+  the biometric operation is called in.
+
+
+=====================
+version 3.0.1
+=====================
+- ADD global parameters - ABS_PARAM_OPEN_TOTAL_TIMEOUT, ABS_PARAM_OPEN_RETRY_UI_NOTIFY_TIMEOUT,
+  ABS_PARAM_OPEN_RETRY_DELAY
+
+Known problems: 
+- Sending ABS_MSG_QUALITY_BACKWARD message from the ABSRawGrab function
+  to callbacks does not work properly.
+
+
+=====================
+version 3.0
+=====================
+- ADD global antispoofing parameters
+- ADD support for TCS4E
+
+Known problems: 
+- Sending ABS_MSG_QUALITY_BACKWARD message from the ABSRawGrab function
+  to callbacks does not work properly.
+
+
+
+=====================
+version 2.5 update
+=====================
+- ADD bsapi merge module
+
+
+=====================
+version 2.5
+=====================
+
+- Supported devices: TCD41, TCD42 (embedded only), TCS4B, TCS4C and TCD50
+
+- ADD biometric templates conversion
+- updated documentation
+- minor bugfixes
+- ADD ABS_OPERATION_FLAG_USE_IDLE flag and corresponding ABS_MSG_IDLE
+- updated bsgui.dll
+- ADD ABS_MSG_DLG_SHOW and ABS_MSG_DLG_HIDE
+
+=====================
+version 2.5 beta
+=====================
+- Official Beta release
+
+
+- Supported OS: MS Windows 2000, XP (32/64bit), Server 2003 (32/64bit) and 
+                Vista (32/64bit)
+- Supported devices:
+
+
+Known Problems:
+- Documentation should go further into details.
+- Samples should be more comprehensive and understandable. Project files
+  for MS Visual C should be included.
+- There is bug with high level callback (when ABS_OPERATION_FLAG_LL_CALLBACK
+  is not set in ABS_OPERATION::Flags). Under some circumstances it may cause
+  that the callback is called after the operation ends if it is canceled
+  with ABSCancelOperation(). (The callback is called from helper thread)
+- Bsgui.dll with default callback implementation, providing standard GUI
+  for the biometric operations, is not included in this beta.
+
+
+=====================
+version 2.5 pre-beta
+=====================
+- Initial release
+- supported OS: MS Windows 2000, XP (32/64bit), Server 2003 (32/64bit) and Vista (32/64bit)
+- Supported devices: 
+
+
+The following features are not yet implemented in this version:
+- Functions ABSCapture(), ABSGrab() and ABSRawGrab() are not yet implemented.
+- Functions ABSSetSessionParameter() and ABSGetSessionParameter() are not 
+  implemented. Currently all parameters are global, use ABSSetGlobalParameter() 
+  and ABSGetGlobalParameter() instead.
+- Flags in ABS_OPERATION are not yet respected (low level vs. high level callback)
+
+Other notes:
+- Headers and sample sources need some cleaning and comments.
+- Some project files for MS Visual Studio will be added in future version 
+  to the samples, so users can build them easily.

@@ -1,0 +1,84 @@
+; Copyright (c) 2000 - 2006 UPEK, Inc.
+; Manufacturer:  UPEK, Inc.
+
+[Version]
+Signature="$CHICAGO$"
+Class=Biometric
+ClassGUID={53D29EF7-377C-4D14-864B-EB3A85769359}
+Provider=%Mfg%
+DriverVer=05/30/2006,1.9.1.2
+Catalogfile=tcusb2k.cat
+
+[DestinationDirs]
+DefaultDestDir=11                               ; Win95,Win98 = \windows\system.  NT5 = \windows\system32
+
+[Manufacturer]
+%Mfg%=Models
+
+[Models]
+%USB\VID_0483&PID_2015.DeviceDesc%          = TcUsb.Scanner,USB\VID_0483&PID_2015
+%USB\VID_0483&PID_2015&MI_00.DeviceDesc%    = TcUsb.Scanner,USB\VID_0483&PID_2015&MI_00
+%USB\VID_0483&PID_2016.DeviceDesc%          = TcUsb.Scanner,USB\VID_0483&PID_2016
+%USB\VID_0483&PID_2016&MI_00.DeviceDesc%    = TcUsb.Scanner,USB\VID_0483&PID_2016&MI_00
+%USB\VID_147E&PID_2015.DeviceDesc%          = TcUsb.Scanner,USB\VID_147E&PID_2015
+%USB\VID_147E&PID_2015&MI_00.DeviceDesc%    = TcUsb.Scanner,USB\VID_147E&PID_2015&MI_00
+%USB\VID_147E&PID_2016.DeviceDesc%          = TcUsb.Scanner,USB\VID_147E&PID_2016
+%USB\VID_147E&PID_2016&MI_00.DeviceDesc%    = TcUsb.Scanner,USB\VID_147E&PID_2016&MI_00
+%USB\VID_147E&PID_1000.DeviceDesc%          = TcUsb.Scanner,USB\VID_147E&PID_1000
+%USB\VID_147E&PID_1000&MI_00.DeviceDesc%    = TcUsb.Scanner,USB\VID_147E&PID_1000&MI_00
+
+[ClassInstall32]
+AddReg=biometry_class_addreg
+
+[biometry_class_addreg]
+HKR,,,,Biometric
+HKR,,Icon,,"-24"
+
+; ***** TcUsb-specific sections *****
+
+; Win2000 model section
+[TcUsb.Scanner.NT]
+Include=sti.inf
+Needs=STI.USBSection
+AddReg=Scanner.AddReg.NT
+CopyFiles=Scanner.CopyFiles.NT,DataSource.CopyFiles
+
+[TcUsb.Scanner.NT.Services]
+Include=sti.inf
+Needs=STI.USBSection.Services
+
+; ***** Model-generic add registry and copy sections *****
+
+; Win2000 add registry section
+[Scanner.AddReg.NT]
+HKR,,HardwareConfig,1,2
+HKR,,DevLoader,,*NTKERN
+
+; Win2000 copy files section
+[Scanner.CopyFiles.NT]
+
+; Used by Win98 and Win2000 to copy data source to twain_32 directory
+[DataSource.CopyFiles]
+
+; ***** Source disk sections *****
+
+[SourceDisksNames]
+99=%DiskName%,,
+
+[SourceDisksFiles]
+
+; ***** Strings *****
+
+[Strings]
+Mfg="UPEK"
+DiskName="TouchChip Installation media"
+USB\VID_0483&PID_2015&MI_00.DeviceDesc    = "TouchChip Fingerprint Reader"
+USB\VID_0483&PID_2015.DeviceDesc          = "TouchChip Fingerprint Reader"
+USB\VID_0483&PID_2016&MI_00.DeviceDesc    = "TouchChip Fingerprint Coprocessor"
+USB\VID_0483&PID_2016.DeviceDesc          = "TouchChip Fingerprint Coprocessor"
+USB\VID_147E&PID_2015&MI_00.DeviceDesc    = "TouchChip Fingerprint Reader"
+USB\VID_147E&PID_2015.DeviceDesc          = "TouchChip Fingerprint Reader"
+USB\VID_147E&PID_2016&MI_00.DeviceDesc    = "TouchChip Fingerprint Coprocessor"
+USB\VID_147E&PID_2016.DeviceDesc          = "TouchChip Fingerprint Coprocessor"
+USB\VID_147E&PID_1000&MI_00.DeviceDesc    = "TouchStrip Fingerprint Sensor"
+USB\VID_147E&PID_1000.DeviceDesc          = "TouchStrip Fingerprint Sensor"

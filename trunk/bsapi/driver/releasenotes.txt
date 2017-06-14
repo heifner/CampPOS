@@ -1,0 +1,412 @@
+TouchChip drivers for Windows - RELEASE NOTES
+---------------------------------------------
+Driver versions in this package
+Platform x86:
+Win 2000       : 1.9.1.2 (NOT SUPPORTED)
+Win XP	       : 1.9.2.167
+Server 2003    : 1.9.2.167
+Server 2008    : 1.9.2.167
+Win Vista      : 1.9.2.167
+Win 7          : 1.9.2.167
+Platform x64:
+Win XP	       : 1.9.2.167
+Server 2003    : 1.9.2.167
+Server 2008    : 1.9.2.167
+Win Vista      : 1.9.2.167
+Win 7          : 1.9.2.167
+Server 2008 R2 : 1.9.2.167
+
+2.19C
+=====
+Changes:
+--------
+Fixed problem with missing TCS5D installation support in merge modules.
+
+2.19
+====
+Changes:
+--------
+- Driver refuses to load when the device endpoint configuration doesn't
+exactly match UPEK device. Necessary for 3rd party projects of composite
+devices which may not behave as expected.
+- Support for emulated NVM extended for Cypress (area) devices.
+- Added support for secondary TCS5D decriptor and Nausicaa devices.
+- Fixed rare problem after resume from sleep and hibernation when application
+reopening device immediately could have problems accessing it.
+
+2.18
+====
+Changes:
+--------
+- Added support for TCS5D device.
+- Vista RTM specific workarounds disabled on Win7 (they were not disabled in the previous versions).
+
+2.17
+====
+Changes:
+--------
+- Solved problem with update from UPEK WBF driver at Win7 when only elevated
+apps could open the device (INF file deletes registry values created by WBF
+driver INF).
+ - Fixed the second minor problem with Driver Verifier (it complained
+about the way how the driver referenced event handles passed from user mode).
+
+2.16
+====
+Changes:
+--------
+- Win7 RC supported.
+- Fixed a minor problem with Driver Verifier (it complained about the way
+how driver referenced event handles passed from user mode).
+- Added a workaround against XACT USB errors (they can occur when a
+misbehaving full speed USB device is connected to USB 2.0 hub influencing
+communication with all other full speed devices connected to this hub).
+
+2.14
+====
+Changes:
+--------
+- Fixed a bug which occasionally caused a BSOD during ESD testing (the bug was
+in error recovery path which was only entered when a recoverable communication
+error was caused by ESD).
+- Workaround against a problem in user mode library added. When a device was
+removed during wake from Sx state, there was potential lockup in user mode
+code (race conditions).
+
+2.13
+====
+Changes:
+--------
+- Fixed a bug in Windows Vista driver which was able to block the current operation indefinitely
+under rare circumstances during device surprise removal (e.g. as a side-effect of an ESD event).
+
+
+2.12
+=============================
+Changes:
+--------
+- Fixed a bug which caused several minutes delay under very rare circumstances
+when a PCMCIA card was put into the slot (OS started resource rebalance which
+was blocked because driver didn't cancel all pending requests).
+
+
+2.11
+======
+Changes:
+--------
+- More devices supported.
+
+
+2.10
+=====
+Changes:
+--------
+- Workaround against one Vista specific USB bug. It caused
+problems with TCD50 readers when OS was suspended or hibernated at least once
+after reboot.
+
+
+2.9
+===
+Changes:
+--------
+- Support for devices without NVM added
+- bug fixes:
+        - rare BSOD 0x9F during OS suspend and hibernation
+
+
+2.8
+===
+Changes:
+--------
+- driver for Windows Vista (x86 and x64), Windows XP (x86 and x64) 
+	and Windows Server 2003 (x86 and x64) updated to 1.9.2.101
+- bug fixes:
+        - suspend and hibernation problem
+
+
+2.7
+====
+Changes:
+--------
+- driver for Windows Vista (x86 and x64), Windows XP (x86 and x64) 
+	and Windows Server 2003 (x86 and x64) updated to 1.9.2.99
+
+2.6
+====
+Changes:
+--------
+- driver for Windows Vista (x86 and x64), Windows XP (x86 and x64) 
+	and Windows Server 2003 (x86 and x64) updated to 1.9.2.93
+- removed drivers for Windows 9x
+
+2.5
+====
+Changes:
+--------
+- driver for Windows Vista (x86 and x64) and Windows XP (x86 and x64)
+	updated to 1.9.2.87
+
+
+2.4
+====
+Changes:
+--------
+- driver for Windows Vista (x86 and x64) updated to 1.9.2.74
+
+
+2.3
+====
+Changes:
+--------
+- driver for windows XP(x86) and server2003(x86) updated to 1.9.2.71
+- added drivers for x64 platform and Windows Vista (x86 and x64)
+
+
+2.2
+=====
+Changes:
+--------
+- driver for windows XP updated to 1.9.2.69
+
+
+2.1
+=====
+The first released version.
+Driver versions in the package:
+Win9x 	   : 1.9.1.1
+Win 2000   : 1.9.1.2
+Win XP	   : 1.8.1.55
+Server 2003: 1.8.1.53
+
+
+--------------------------------------------------------------
+Release Notes - Driver for Windows 2000/ME/98
+--------------------------------------------------------------
+
+
+1.9.1.2
+========
+
+Changes:
+--------
+- INF file for w2k fixed to avoid chkinf errors and warnings. w9x sections removed.
+
+1.9.1.1
+========
+
+Changes:
+--------
+- INF files updated to support all UPEK devices.
+
+1.8.1.1
+=======
+The first released version.
+
+
+
+--------------------------------------------------------------
+Release Notes - Driver for Windows XP/Server2003/Vista
+--------------------------------------------------------------
+
+1.9.2.93
+=========
+
+Changes:
+--------
+- Workarounds against Vista specific USB bugs added:
+        - At UHCI controllers OS driver misses remote wakeup from suspended
+          device until HC is also suspended. It causes up to 1024 ms delay
+          which leads to lost image with sonly devices and apparent delays
+          with chipset devices. Driver now allows sleep in session only if HC
+          can be really suspended according to current power policy settings.
+          In addition, it watches HC state and awakes device when HC is awaken
+          for some reason (other USB device which doesn't support suspend is
+          attached to the same HC).
+        - Selective suspend is now allowed at VIA UHCI adapters (disabled in
+          build 71). Remote wakeup is still missed by OS drivers but driver is
+          able to detect it by watching HC state.
+- Batch registers access IOCTLs added. It allows more efficient communication
+  with sonly devices and shorter total wakeup time after finger detect.
+- Known build 87 problems fixed:
+        - Application lockup when a thread waiting for PnP and power events
+          forcefully closed device handle (Details: pending request passed to
+          USB stacks weren't cancelled and other app thread could lockup
+          waiting for the. Driver now cancels all pending request when
+          application with exclusive access closes the handle)
+
+
+1.9.2.87 
+=========
+
+Changes:
+--------
+- Known build 74 problems fixed:
+        - Rare BSOD during DTM test on some computers (Details: driver could
+          be unloaded and removed from memory before completion routines
+          for power IRPs really finished)
+        - Automatic suspend invoked on low battery alarm was delayed about one
+          minute at some computers (Details: low battery alarm handling
+          requested immediate suspend without previous query. Some actions
+          necessary to prepare suspend were called only in query path)
+        - Updated DTM Plug and Play test tool failed (Details: driver didn't
+          handle all PnP transitions related to resource rebalance quite
+          correctly)
+        - Delay after finger detect at some Vista computer which could cause
+          loss of part or complete image with sonly devices (Details:
+          interrupt endpoint cancellation at OHCI host controller can take up
+          to 500 ms at Vista).
+        - Very rare lockup on driver unload (Details: there were race
+          conditions with Wait Wake IRP handling which could cause WW IRP
+          cancelled during unload was reinvoked and driver blocked waiting for
+          its completion).
+- Better interrupt endpoint handling. New IOCTLs allow to minimize number of
+  task switches and IRP cancellations related to interrupt endpoint.
+
+
+1.9.2.74
+=========
+
+Changes:
+--------
+- S1/S3/S4 resume time at Vista decreased to several milliseconds.
+- Known build 71 problems fixed:
+        - Selective suspend can be globally disabled using registry option
+          (Details: registry option was already there but was ignored)
+        - ESD protection doesn't cause unnecessary delays at Vista (Details:
+          Vista incorrectly reports USB port state after OS suspend. Driver
+          checks port state after device resume from suspend and because OS
+          reported port is disabled, driver reset the port which caused
+          unnecessary delays. Now port is only reset after an error).
+
+
+
+1.9.2.71 
+=========
+
+Changes:
+--------
+- Known build 69 problems fixed:
+        - Rare BSOD on dual core x64 computers with Vista RC1 (Details: there
+          were race conditions when sensor was unplugged and driver tried to
+          suspend the device at the same time. There was no problem with previous OS
+          versions but Vista checked for this situation and invoked USB
+          bugcheck [code 0xfe, 8])
+- Selective suspend is disabled on computers with VIA USB adapters and Vista
+  RC1 and above. It is necessary because USB remote wakeup does not work there
+  and sensor cannot signal finger detect when the device is suspended.
+
+
+
+1.8.1.69 
+=========
+
+Changes:
+--------
+- AMD64 version available
+- Known build 55 problem fixed:
+        - Rare BSOD on some computers (Details: there were race conditions in
+        interrupt endpoint handling. It could lead to BSOD under some
+        circumstances, usually when computer was brought out of suspend mode).
+        - Checked build complaint about WaitWake IRP (Details: WW IRP was
+        sometimes sent in the power state when it was forbidden. It did not
+        cause any real problems, just checked build warning).
+
+
+1.8.1.55 
+=========
+
+Changes:
+--------
+- Known 1.8.1.53 problems fixed:
+        - Driver version information was not displayed using Device Manager,
+          driver Properties, Driver tab, Driver Details dialog.
+- System wake-up and "Allow this device to bring the computer out of standby"
+  checkbox in Power Management tab (Device Manager) disabled (greyed out) by
+  default. It can be enabled by changing the registry.
+
+
+1.8.1.53 
+=========
+
+Changes:
+--------
+- Known 1.8.1.44 problems fixed:
+        - Deadlock (OS freeze at XP SP2) (Details: Deadlock could occur during
+          OS power mode change with the same symptoms as described in 1.8.1.44.
+	  However, the reason was different and probability much lower).
+        - HCT 12.1 USB Device Wake Up test problem (Details: Mentioned test
+          reported PoInitSleepStateSettings error because it sent incorrectly
+          sized request to turn on system wakeup to the driver and driver
+          refused it. The driver has been changed to handle incorrectly sized requests)
+        - Several internal problems that could potentially cause
+          driver crash (BSOD). The probability was very low and there was no
+          actual crash reported.
+        - Deadlock (OS freeze at Vista beta 1) (Details: Deadlock occurred
+          each time device was unplugged from the USB port. Sensor was not
+          functional after next plug-in and OS locked up during next power
+          state change, i.e. Standby, Hibernate, Restart or Power Off with the
+          same symptoms as in other cases. It was caused by OS changes in
+          Vista beta 1).
+        - Non-functional device (Details: When device was brought out of suspend mode,
+          it sometimes suddenly stopped working for some time and recover
+          automatically after several seconds. It would manifest as
+          communication errors displayed by application or non-responsive
+          application for a while. The problem occurred when device was
+          accidentally awaken too soon after suspend and OS drivers did not
+          handle it correctly. Driver now ensures minimal time between
+          device suspend and the next wakeup).
+- Driver is able to automatically recover from some hardware errors, mainly ESDs,
+  which cause Host Controlled disables USB port. It also supports manual recovery
+  that can be used by applications when detect device problem.
+- Additional PID for the new class of sensor-only devices supported in the INF file
+
+
+1.8.1.44
+=========
+Changes:
+- Known 1.8.1.38 problems fixed:
+	- Deadlock (OS freeze) at XP SP2. (Details: When OS changes power mode 
+	  i.e. Standby, Hibernate, Restart or Power Off, OS prepares the action, 
+	  the screen with "Going to<power mode>" information is displayed and the system freezes. 
+	  Mouse cursor can be moved but nothing else works. Please note that this
+	  problem looks similar to the problem in 1.8.1.26, but the cause is different.)
+	- Sensor stops working at XP SP2. (Details: Sensor suddenly stops working; 
+	  no menu, no reaction on touch. System can continue working for hours with 
+	  no problem but on power state change an OS freezes as described above.)
+- Power management reworked to eliminate race conditions between selective
+  suspend and OS power management
+- Symbolic link support added for compatibility with legacy software 
+- Additional UPEK VID supported in the INF file
+
+
+1.8.1.38
+=========
+Changes:
+- TcDrv manufacturer changed from ST to UPEK in the INF file
+- "Allow this device to bring the computer out of standby" checkbox in Power
+  Management tab (Device Manager) enabled only if device really can awake
+  computer from low power modes.
+- Known 1.8.1.26 problems fixed:
+	- Deadlock (OS freeze) at XP SP2 RC2 and XP SP2 final version. 
+	  (Details: When OS changes power mode i.e. Standby, Hibernate, Restart or 
+	  Power Off, OS prepares the action, displays the screen with "Going to<power mode>"
+	  information and freezes. Mouse cursor can be moved but nothing else works.)
+
+
+1.8.1.26 
+=========
+Changes:
+- Power Management tab added to device properties in the Device Manager
+- Added IOCTL support for applications which need to get USB descriptors.
+- Known 1.8.1.19 problems fixed:
+      - Rare BSOD on some computers. (Details: when device was selectively
+        suspended by OS and awaken later, race conditions occured that
+        could cause problem detected by the OS USB driver which in turn invokes
+        BSOD.)
+
+
+1.8.1.19 
+=========
+The first released version.
+

@@ -1,6 +1,6 @@
-set PATH=c:\oci\MPC_svn;%PATH%;C:\dev\bsapi\bin\32-bit;c:\dev\sqlite
-set MPC_ROOT=c:\oci\MPC_svn
-set BSAPI_ROOT=c:\dev\bsapi
-set SQLITE_ROOT=c:\dev\sqlite
-set CAMPPOS_ROOT=c:\dev\CampPOS\trunk
-mwc.pl -type vc8 CampPOS.mwc
+set CAMPPOS_ROOT=D:\heifner\CampPOS\trunk
+set MPC_ROOT=D:\dev_tools\MPC-MPC_4_1_2
+set BSAPI_ROOT=%CAMPPOS_ROOT%\bsapi
+set PATH=%MPC_ROOT%;%PATH%;%BSAPI_ROOT%\bin\32-bit
+mwc.pl -type vc12 CampPOS.mwc
+REM Update Platform target of CampAdminGUI and CampSaleGUI to x86

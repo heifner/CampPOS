@@ -1,0 +1,23 @@
+
+#include <windows.h>
+#include "resource.h"
+
+
+/* English language */
+LANGUAGE 0x0409, 0
+
+/* Menu */
+ID_MENU MENU
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Start",     IDM_START
+        MENUITEM "S&top",      IDM_STOP
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",      IDM_QUIT
+    END
+END
+
+/* Navigation map image */
+ID_NAVIGATION_MAP BITMAP map.bmp
+
