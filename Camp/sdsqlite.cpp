@@ -277,7 +277,8 @@ sql&	sql::operator<<(const std::string& val)
 /// Bind an input stream value to the current input.
 sql&	sql::operator<<(std::istream& val)
 {
-	std::streamsize bytes = val.seekg(0, std::ios::end).tellg();
+	std::streamsize ssbytes = val.seekg(0, std::ios::end).tellg();
+  size_t bytes = static_cast<size_t>(ssbytes);
 	val.seekg(0);
 	void* buf = (bytes > 0) ? std::malloc(bytes) : 0;
 	if(bytes > 0)

@@ -35,7 +35,7 @@
 #include <string>
 #include <istream>
 #include <ostream>
-#include <sqlite3.h>
+#include "sqlite3.h"
 
 namespace sd
 {

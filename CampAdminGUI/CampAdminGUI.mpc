@@ -28,4 +28,5 @@ project : CSBase {
   // since adding additional assemblies, need to explicitly add the first three
   lit_libs += System System.Data System.Xml 
   lit_libs += System.Drawing System.Windows.Forms
+  lit_libs += Camp
 }
