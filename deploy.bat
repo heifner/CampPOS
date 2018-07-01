@@ -4,14 +4,15 @@ REM - .NET Framework 4 required
 REM ----------------------------------------- 
 
 set DEPLOY_DIR=CampPOS
-set VC_REDIST_DIR=C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\redist\x86\Microsoft.VC120.CRT
+rem set VC_REDIST_DIR=C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\redist\x86\Microsoft.VC120.CRT
+set VC_REDIST_DIR=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.14.26405\x86\Microsoft.VC141.CRT
 set TARGET_DIR=C:\temp\%DEPLOY_DIR%
 set CURRENT_DIR=%CD%
 
 pushd .
 
-rm -f CampPOS.zip
-rm -rf %TARGET_DIR%
+del /f CampPOS.zip
+del /f /s %TARGET_DIR%
 mkdir %TARGET_DIR%
 
 copy Output\Release\*.exe %TARGET_DIR%
